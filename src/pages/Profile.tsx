@@ -8,10 +8,18 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dog, Cat, Edit2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AddPetDialog from "@/components/AddPetDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Profile = () => {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<any>(null);
   
   // Mock user data
   const [userData, setUserData] = useState({
@@ -162,7 +170,12 @@ const Profile = () => {
                           <p className="font-medium">{pet.color}</p>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" className="w-full mt-4">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full mt-4"
+                        onClick={() => setSelectedPet(pet)}
+                      >
                         View Details
                       </Button>
                     </CardContent>
@@ -173,6 +186,47 @@ const Profile = () => {
           </Card>
         </div>
       </div>
+
+      {/* Pet Details Dialog */}
+      <Dialog open={!!selectedPet} onOpenChange={() => setSelectedPet(null)}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                {selectedPet?.type === "Dog" ? (
+                  <Dog className="w-6 h-6 text-primary" />
+                ) : (
+                  <Cat className="w-6 h-6 text-secondary" />
+                )}
+              </div>
+              {selectedPet?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Complete information about your pet
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-muted-foreground">Type</Label>
+                <p className="font-medium mt-1">{selectedPet?.type}</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground">Breed</Label>
+                <p className="font-medium mt-1">{selectedPet?.breed}</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground">Age</Label>
+                <p className="font-medium mt-1">{selectedPet?.age}</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground">Color</Label>
+                <p className="font-medium mt-1">{selectedPet?.color}</p>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
