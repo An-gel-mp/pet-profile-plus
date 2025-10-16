@@ -2,16 +2,17 @@ import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MapPin, Calendar } from "lucide-react";
+import { Heart, MapPin, Dog, Cat } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import AddPetDialog from "@/components/AddPetDialog";
 
 const Adoption = () => {
   const { toast } = useToast();
   const [favorites, setFavorites] = useState<number[]>([]);
 
-  // Mock adoption data
-  const availablePets = [
+  // Mock adoption data with state
+  const [availablePets, setAvailablePets] = useState([
     {
       id: 1,
       name: "Buddy",
@@ -78,7 +79,22 @@ const Adoption = () => {
       description: "Playful and curious, loves exploring and climbing.",
       color: "hsl(270 60% 70%)",
     },
-  ];
+  ]);
+
+  const handleAddPet = (newPet: any) => {
+    const colors = [
+      "hsl(6 78% 70%)",
+      "hsl(177 64% 60%)",
+      "hsl(270 60% 70%)",
+    ];
+    
+    const petWithId = {
+      ...newPet,
+      id: availablePets.length + 1,
+      color: colors[availablePets.length % colors.length],
+    };
+    setAvailablePets([petWithId, ...availablePets]);
+  };
 
   const toggleFavorite = (petId: number) => {
     setFavorites((prev) =>
@@ -99,11 +115,14 @@ const Adoption = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">Find Your New Best Friend</h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Browse adorable pets looking for loving homes. Each one is ready to bring joy to your life.
-            </p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-center md:text-left">
+              <h1 className="text-4xl font-bold mb-4">Find Your New Best Friend</h1>
+              <p className="text-muted-foreground text-lg max-w-2xl">
+                Browse adorable pets looking for loving homes. Each one is ready to bring joy to your life.
+              </p>
+            </div>
+            <AddPetDialog onAddPet={handleAddPet} isAdoption={true} />
           </div>
 
           {/* Pets Grid */}
@@ -114,10 +133,14 @@ const Adoption = () => {
                 className="bg-[var(--gradient-card)] hover:shadow-[var(--shadow-hover)] transition-[var(--transition-smooth)] hover:-translate-y-1 overflow-hidden"
               >
                 <div
-                  className="h-48 flex items-center justify-center text-6xl"
+                  className="h-48 flex items-center justify-center"
                   style={{ backgroundColor: pet.color }}
                 >
-                  🐾
+                  {pet.type === "Dog" ? (
+                    <Dog className="w-24 h-24 text-primary-foreground" />
+                  ) : (
+                    <Cat className="w-24 h-24 text-primary-foreground" />
+                  )}
                 </div>
                 <CardHeader>
                   <div className="flex items-start justify-between">

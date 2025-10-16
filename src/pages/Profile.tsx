@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { PawPrint, Plus, Edit2 } from "lucide-react";
+import { Dog, Cat, Edit2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import AddPetDialog from "@/components/AddPetDialog";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -19,14 +20,14 @@ const Profile = () => {
     phone: "(555) 123-4567",
   });
 
-  // Mock pet data
-  const pets = [
+  // Mock pet data with state
+  const [pets, setPets] = useState([
     {
       id: 1,
       name: "Max",
       type: "Dog",
       breed: "Golden Retriever",
-      age: 3,
+      age: "3 years",
       color: "Golden",
     },
     {
@@ -34,10 +35,18 @@ const Profile = () => {
       name: "Luna",
       type: "Cat",
       breed: "Persian",
-      age: 2,
+      age: "2 years",
       color: "White",
     },
-  ];
+  ]);
+
+  const handleAddPet = (newPet: any) => {
+    const petWithId = {
+      ...newPet,
+      id: pets.length + 1,
+    };
+    setPets([...pets, petWithId]);
+  };
 
   const handleSave = () => {
     setIsEditing(false);
@@ -121,10 +130,7 @@ const Profile = () => {
                 <CardTitle className="text-2xl">My Pets</CardTitle>
                 <CardDescription>Manage your pet profiles</CardDescription>
               </div>
-              <Button variant="default">
-                <Plus className="w-4 h-4" />
-                Add Pet
-              </Button>
+              <AddPetDialog onAddPet={handleAddPet} />
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
@@ -133,7 +139,11 @@ const Profile = () => {
                     <CardHeader>
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                          <PawPrint className="w-6 h-6 text-primary" />
+                          {pet.type === "Dog" ? (
+                            <Dog className="w-6 h-6 text-primary" />
+                          ) : (
+                            <Cat className="w-6 h-6 text-secondary" />
+                          )}
                         </div>
                         <div>
                           <CardTitle>{pet.name}</CardTitle>
@@ -145,7 +155,7 @@ const Profile = () => {
                       <div className="grid grid-cols-2 gap-2 text-sm">
                         <div>
                           <p className="text-muted-foreground">Age</p>
-                          <p className="font-medium">{pet.age} years</p>
+                          <p className="font-medium">{pet.age}</p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Color</p>
